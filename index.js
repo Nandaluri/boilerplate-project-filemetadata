@@ -2,8 +2,12 @@ var express = require('express');
 var cors = require('cors');
 require('dotenv').config()
 const multer = require('multer');
-const upload = multer({ dest : 'uploads/'});
-const fs = require('fs');
+//used to store data in memory rather then uploads folder. removes the need for "fs"
+const upload = multer({ storage: multer.memoryStorage()});
+
+//used to store image in uploads folder first, then extract data
+//const upload = multer({ dest : 'uploads/'});
+//const fs = require('fs');
 
 var app = express();
 
@@ -17,12 +21,15 @@ app.get('/', function (req, res) {
 app.post('/api/fileanalyse', upload.single('upfile'), async (req,res) => {
   const {originalname, mimetype, size, path} = req.file
   res.json({"name": originalname, "type" : mimetype, "size" : size})
-  fs.unlink(path, (err) => {
+
+  //code to delete file from uploads folder when done
+
+  /*fs.unlink(path, (err) => {
     if(err){
       throw err;
     }
     console.log("file deletes successfully")
-  })
+  })*/
 })
 
 
